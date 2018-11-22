@@ -275,7 +275,7 @@ def main(img_name, alpha, resize_number, epoch):
     :param alpha: 学习率
     :param resize_number: 重建次数，重建一次，shape+1
     :param epoch: 每次重建的训练次数
-    :return: 输入重建后的图片到output_root
+    :return: 输出重建后的图片到output_root
     '''
     output_root = "./output_8_conv"
     trains, targets = get_trains_targets(img_name)
@@ -304,4 +304,4 @@ def main(img_name, alpha, resize_number, epoch):
 
 
 if __name__ == "__main__":
-    main('./imgs/image_0729.jpg', alpha=1e-11, resize_number=2, epoch=500)
+    main('./image0.jpg', alpha=3e-11, resize_number=2, epoch=200)
