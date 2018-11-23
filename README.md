@@ -17,9 +17,9 @@ Super-Resolution CNN using numpy
 
 #### 用八个中间卷积层，每层的kernel都是3*3，步长为1，out channel为64，再加一个output卷积层，out channel为3，得到重建后的图片。每一个中间卷积层使用Relu激活。因为网络中没有池化层和全连接层，所以输入图片的shape和网络输出矩阵的shape是相同的，可以用均方差来优化网络参数。
 
-<div align=center><img width="600" height="300" src="https://github.com/DQ0408/NumPy-SRCNN/blob/master/imgs/Fig1_1.jpg"/></div>
+<div align=center><img width="600" height="300" src="https://github.com/DQ0408/NumPy-SRCNN/blob/master/imgs/Fig1_1.png"/></div>
 
-<div align=center><img width="600" height="300" src="https://github.com/DQ0408/NumPy-SRCNN/blob/master/imgs/Fig1_2.jpg"/></div>
+<div align=center><img width="600" height="300" src="https://github.com/DQ0408/NumPy-SRCNN/blob/master/imgs/Fig1_2.png"/></div>
 
 #### <div align=center>Fig1.训练集生成过程</div>
 
