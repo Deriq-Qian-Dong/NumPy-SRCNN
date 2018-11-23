@@ -72,11 +72,16 @@ class Conv2D(object):
         self.stride = stride
         self.ksize = ksize
         self.method = method
-        # He normal参数初始化
-        fan_in = reduce(lambda x, y: x * y, shape)
-        stddev = math.sqrt(2 / fan_in)
-        self.weights = np.random.normal(0, stddev, (ksize, ksize, self.input_channels, self.output_channels))
-        self.bias = np.random.normal(0, stddev, self.output_channels)
+        weights_scale = math.sqrt(
+            reduce(lambda x, y: x * y, (1, 64, 64, 3)) / self.output_channels)  # 用于控制权重的范围，防止梯度消失/爆炸
+        self.weights = np.random.standard_normal(
+            (ksize, ksize, self.input_channels, self.output_channels)) / weights_scale
+        self.bias = np.random.standard_normal(self.output_channels) / weights_scale
+        # He normal参数初始化  标准差太小，收敛过慢
+        # fan_in = reduce(lambda x, y: x * y, shape)
+        # stddev = math.sqrt(2 / fan_in)
+        # self.weights = np.random.normal(0, stddev, (ksize, ksize, self.input_channels, self.output_channels))
+        # self.bias = np.random.normal(0, stddev, self.output_channels)
         self.w_gradient = np.zeros(self.weights.shape)
         self.b_gradient = np.zeros(self.bias.shape)
 
@@ -333,4 +338,4 @@ def t_cnn():
 
 if __name__ == "__main__":
     # t_cnn()
-    main('./image0.jpg', alpha=3e-11, resize_time=2, epoch=300)
+    main('./image0.jpg', alpha=3e-11, resize_time=2, epoch=200)
