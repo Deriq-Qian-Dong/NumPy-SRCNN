@@ -3,6 +3,7 @@ Super-Resolution CNN using numpy
 
 ## 1.运行环境
 > python 3.x
+
 > OpenCV-Python 3.4.2
 
 ## 2.运行方式
