@@ -72,14 +72,11 @@ class Conv2D(object):
         self.stride = stride
         self.ksize = ksize
         self.method = method
-
-        weights_scale = math.sqrt(
-            reduce(lambda x, y: x * y, (1,64,64,3)) / self.output_channels)  # 用于控制权重的范围，防止梯度消失/爆炸
-        self.weights = np.random.standard_normal(
-            (ksize, ksize, self.input_channels, self.output_channels)) / weights_scale
-        # np.zeros((ksize, ksize, self.input_channels, self.output_channels)) / weights_scale
-        # self.bias = np.zeros(self.output_channels) / weights_scale
-        self.bias = np.random.standard_normal(self.output_channels) / weights_scale
+        # He normal参数初始化
+        fan_in = reduce(lambda x, y: x * y, shape)
+        stddev = math.sqrt(2 / fan_in)
+        self.weights = np.random.normal(0, stddev, (ksize, ksize, self.input_channels, self.output_channels))
+        self.bias = np.random.normal(0, stddev, self.output_channels)
         self.w_gradient = np.zeros(self.weights.shape)
         self.b_gradient = np.zeros(self.bias.shape)
 
@@ -269,11 +266,11 @@ def get_trains_targets(img_name):
     return trains, targets
 
 
-def main(img_name, alpha, resize_number, epoch):
+def main(img_name, alpha, resize_time, epoch):
     '''
     :param img_name: 待超清重建的图片名
     :param alpha: 学习率
-    :param resize_number: 重建次数，重建一次，shape+1
+    :param resize_time: 重建次数，重建一次，shape+1
     :param epoch: 每次重建的训练次数
     :return: 输出重建后的图片到output_root
     '''
@@ -288,7 +285,7 @@ def main(img_name, alpha, resize_number, epoch):
     if not os.path.exists(os.path.dirname(out_name)):
         os.makedirs(os.path.dirname(out_name))
     cv2.imwrite(out_name, img_out)
-    for i in range(resize_number - 1):
+    for i in range(resize_time - 1):
         trains = trains[0:-1]
         trains.insert(0, blurry_image)
         targets = targets[0:-1]
@@ -303,5 +300,37 @@ def main(img_name, alpha, resize_number, epoch):
         cv2.imwrite(out_name, img_out)
 
 
+def t_cnn():
+    '''
+    测试cnn
+    '''
+    trains = [np.ones((1, 32, 32, 3)) for _ in range(7)]
+    targets = [np.ones((1, 32, 32, 3)) + 1 for i in range(7)]
+    alpha = 1e-6
+    shape = (1, 32, 32, 3)
+    conv1 = Conv2D(shape, 3, 64)
+    final_out = Conv2D(shape, 64, 3)
+    relu = Relu()
+    mse = MSE()
+    losses = []
+    for i in range(10):
+        for j in range(7):
+            conv1_out = relu.forward(conv1.forward(trains[j]))
+            out = final_out.forward(conv1_out)
+            train_loss = mse.cal_loss(out, targets[j])
+            losses.append(train_loss)
+            conv1.gradient(final_out.gradient(mse.gradient(out, targets[j])))
+            final_out.backward(alpha=alpha)
+            conv1.backward(alpha=alpha)
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) +
+                  "  epoch: %d  step: %d loss: %.4f alpha: %.1e" % (i, j, train_loss, alpha))
+    plt.plot(losses)
+    plt.title("loss - epoch")
+    plt.xlabel('epoch')
+    plt.ylabel('loss')
+    plt.show()
+
+
 if __name__ == "__main__":
-    main('./image0.jpg', alpha=3e-11, resize_number=2, epoch=200)
+    # t_cnn()
+    main('./image0.jpg', alpha=3e-11, resize_time=2, epoch=200)
