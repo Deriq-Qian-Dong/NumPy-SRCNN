@@ -333,4 +333,4 @@ def t_cnn():
 
 if __name__ == "__main__":
     # t_cnn()
-    main('./image0.jpg', alpha=3e-11, resize_time=2, epoch=200)
+    main('./image0.jpg', alpha=3e-11, resize_time=2, epoch=300)
