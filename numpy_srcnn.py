@@ -338,4 +338,11 @@ def t_cnn():
 
 if __name__ == "__main__":
     # t_cnn()
-    main('./image0.jpg', alpha=3e-11, resize_time=2, epoch=200)
+    try:
+        image_name = sys.argv[1]
+        alpha = float(sys.argv[2])
+        resize_time = int(sys.argv[3])
+        epoch = int(sys.argv[4])
+        main(image_name, alpha=alpha, resize_time=resize_time, epoch=epoch)
+    except:
+        main('./image0.jpg', alpha=3e-11, resize_time=2, epoch=200)
