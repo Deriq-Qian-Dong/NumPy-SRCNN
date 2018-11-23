@@ -7,9 +7,9 @@ Super-Resolution CNN using numpy
 > OpenCV-Python 3.4.2
 
 ## 2.运行方式
-> python numpy_srcnn.py image_name learning_rate resize_time epoch
+> 1)python numpy_srcnn.py image_name learning_rate resize_time epoch
 
-> 执行 python numpy_srcnn.py 默认参数为
+> 2)执行 python numpy_srcnn.py 默认参数为
 
 >> image_name='./image0.jpg'
 
